@@ -1,0 +1,7 @@
+{
+  "enable": true,
+  "enable-MCDR-like-cmd": true,
+  "only-op": false,
+  "blacklist": [],
+  "deny-tp-to-player": ["Disy920"]
+}

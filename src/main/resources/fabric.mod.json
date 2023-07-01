@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "gamemode",
+  "version": "${version}",
+  "name": "Gamemode",
+  "description": "",
+  "authors": [],
+  "contact": {
+    "repo": "https://github.com/Disy/Gamemode"
+  },
+  "license": "MIT",
+  "icon": "assets/gamemode/icon.png",
+  "environment": "server",
+  "entrypoints": {
+    "main": [
+      "cn.disy920.gamemode.Main"
+    ]
+  },
+  "mixins": [
+    "gamemode.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.12.0",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
