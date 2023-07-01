@@ -43,11 +43,12 @@ public class MixinChat {
                             ((PlayerAccess) player).setPreviousPosition(player.getWorld(), pos.x, pos.y, pos.z, player.getYaw(), player.getPitch());
                         } else {
                             server.getPlayerManager().broadcast(Text.literal(player.getName().getString() + "结束了观察模式").setStyle(Style.EMPTY.withColor(Formatting.GREEN)), false);
-                            player.changeGameMode(GameMode.DEFAULT);
-                            ((PlayerAccess) player).setSpectating(false);
 
                             PlayerPosition prevPosition = ((PlayerAccess) player).getPreviousPosition();
                             player.teleport(prevPosition.takeServerWorld(), prevPosition.getX(), prevPosition.getY(), prevPosition.getZ(), prevPosition.getYaw(), prevPosition.getPitch());
+
+                            player.changeGameMode(GameMode.DEFAULT);
+                            ((PlayerAccess) player).setSpectating(false);
                         }
                     }
                 }
