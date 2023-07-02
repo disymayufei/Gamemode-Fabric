@@ -16,7 +16,7 @@ import java.io.File;
 public class Main implements ModInitializer {
 
     public static Logger LOGGER = LoggerFactory.getLogger("StarLight-Ore Billboard");
-    public static RootSection config = null;
+    public static RootSection globalConfig = null;
     public static MinecraftServer server = null;
 
     public void onEnable() {
@@ -36,7 +36,7 @@ public class Main implements ModInitializer {
 
         JsonConfig.saveDefaultConfig(configFile.toPath());
         try {
-            config = JsonConfig.loadConfig(configFile);
+            globalConfig = JsonConfig.loadConfig(configFile);
         }
         catch (Exception e) {
             LOGGER.error("配置文件加载失败，本Mod无法运行！错误的堆栈信息如下：");

@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static cn.disy920.gamemode.Main.config;
+import static cn.disy920.gamemode.Main.globalConfig;
 import static cn.disy920.gamemode.Main.server;
 
 @Environment(EnvType.SERVER)
@@ -30,10 +30,10 @@ public class MixinChat {
     @Inject(at = @At("HEAD"), method = "onChatMessage")
     private void onChatMessage(ChatMessageC2SPacket packet, CallbackInfo ci) {
         String chatMessage = packet.chatMessage();
-        if (config.getBoolean("enable-MCDR-like-cmd")) {
+        if (globalConfig.getBoolean("enable") && globalConfig.getBoolean("enable-MCDR-like-cmd")) {
             if (chatMessage.equals("!!spec")) {
-                if (!config.getBoolean("only-op") || (config.getBoolean("only-op") && player.hasPermissionLevel(4))) {
-                    if (!config.getStringList("blacklist").contains(player.getName().getString())) {
+                if (!globalConfig.getBoolean("only-op") || (globalConfig.getBoolean("only-op") && player.hasPermissionLevel(4))) {
+                    if (!globalConfig.getStringList("blacklist").contains(player.getName().getString())) {
                         if (!((PlayerAccess) player).isSpectating()) {
                             server.getPlayerManager().broadcast(Text.literal(player.getName().getString() + "准备观察你们啦！").setStyle(Style.EMPTY.withColor(Formatting.GOLD)), false);
                             player.changeGameMode(GameMode.SPECTATOR);
@@ -51,6 +51,48 @@ public class MixinChat {
                             ((PlayerAccess) player).setSpectating(false);
                         }
                     }
+                    else {
+                        player.sendMessage(Text.literal("您已被禁用该命令！").setStyle(Style.EMPTY.withColor(Formatting.RED)));
+                    }
+                }
+            }
+            else if(chatMessage.startsWith("!!spec ")) {
+                String playerName = chatMessage.substring(7);
+
+                if (!globalConfig.getStringList("blacklist").contains(player.getName().getString())) {
+                    if ("".equals(playerName)) {
+                        player.sendMessage(Text.literal("请不要输入一个空的玩家名").setStyle(Style.EMPTY.withColor(Formatting.RED)));
+                    }
+                    else if (player.getName().getString().equals(playerName)) {
+                        player.sendMessage(Text.literal("自己是不能观察自己的").setStyle(Style.EMPTY.withColor(Formatting.RED)));
+                    }
+                    else if (globalConfig.getStringList("deny-tp-to-player").contains(playerName)) {
+                        player.sendMessage(Text.literal("该玩家不允许您在观察者模式下传送到TA身旁").setStyle(Style.EMPTY.withColor(Formatting.RED)));
+                    }
+                    else {
+                        ServerPlayerEntity targetPlayer = server.getPlayerManager().getPlayer(playerName);
+                        if (targetPlayer != null) {
+                            if (!((PlayerAccess) player).isSpectating()) {
+                                server.getPlayerManager().broadcast(Text.literal(player.getName().getString() + "准备观察" + playerName + "啦！").setStyle(Style.EMPTY.withColor(Formatting.GOLD)), false);
+                                player.changeGameMode(GameMode.SPECTATOR);
+                                ((PlayerAccess) player).setSpectating(true);
+
+                                Vec3d pos = player.getPos();
+                                ((PlayerAccess) player).setPreviousPosition(player.getWorld(), pos.x, pos.y, pos.z, player.getYaw(), player.getPitch());
+
+                                player.teleport(targetPlayer.getServerWorld(), targetPlayer.getX(), targetPlayer.getY(), targetPlayer.getZ(), targetPlayer.getYaw(), targetPlayer.getPitch());
+                            } else {
+                                server.getPlayerManager().broadcast(Text.literal(player.getName().getString() + "准备观察" + playerName + "啦！").setStyle(Style.EMPTY.withColor(Formatting.GOLD)), false);
+                                player.teleport(targetPlayer.getServerWorld(), targetPlayer.getX(), targetPlayer.getY(), targetPlayer.getZ(), targetPlayer.getYaw(), targetPlayer.getPitch());
+                            }
+                        }
+                        else {
+                            player.sendMessage(Text.literal("该玩家不在线！").setStyle(Style.EMPTY.withColor(Formatting.RED)));
+                        }
+                    }
+                }
+                else {
+                    player.sendMessage(Text.literal("您已被禁用该命令！").setStyle(Style.EMPTY.withColor(Formatting.RED)));
                 }
             }
         }

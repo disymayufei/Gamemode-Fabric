@@ -34,6 +34,8 @@ import java.nio.file.Files;
 import java.util.List;
 import java.util.Set;
 
+import static cn.disy920.gamemode.Main.globalConfig;
+
 @Environment(EnvType.SERVER)
 @Mixin(ServerPlayerEntity.class)
 public abstract class MixinServerPlayerEntity extends PlayerEntity implements PlayerAccess {
@@ -54,7 +56,7 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements Pl
 
     @Inject(method = "<init>", at = @At("TAIL"))
     private void injectInit(MinecraftServer server, ServerWorld world, GameProfile profile, CallbackInfo ci) {
-        File dataDir = new File(FabricLoader.getInstance().getConfigDir().toFile(), "playerData" );
+        File dataDir = new File(FabricLoader.getInstance().getConfigDir().toFile(), "Gamemode/playerData" );
         if (!dataDir.exists() || dataDir.isFile()) {
             dataDir.mkdirs();
         }
@@ -94,7 +96,7 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements Pl
     public void injectTeleport$1(ServerWorld world, double destX, double destY, double destZ, Set<PositionFlag> flags, float yaw, float pitch, CallbackInfoReturnable<Boolean> cir) {
         if (isSpectating()) {
             PlayerEntity player = world.getClosestPlayer(destX, destY, destZ, 2, false);
-            List<String> blacklist = config.getStringList("deny-tp-to-player");
+            List<String> blacklist = globalConfig.getStringList("deny-tp-to-player");
 
             if (player != null) {
                 if (blacklist.contains(player.getName().getString())) {
@@ -109,7 +111,7 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements Pl
     public void injectTeleport$2(ServerWorld targetWorld, double x, double y, double z, float yaw, float pitch, CallbackInfo ci) {
         if (isSpectating()) {
             PlayerEntity player = targetWorld.getClosestPlayer(x, y, z, 2, false);
-            List<String> blacklist = config.getStringList("deny-tp-to-player");
+            List<String> blacklist = globalConfig.getStringList("deny-tp-to-player");
 
             if (player != null) {
                 if (blacklist.contains(player.getName().getString())) {
