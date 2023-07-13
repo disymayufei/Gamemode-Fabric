@@ -84,13 +84,16 @@ public class SpecCommand {
                                                          if (globalConfig.getBoolean("enable")) {
                                                              if (source.getEntity() instanceof ServerPlayerEntity player) {
                                                                  if (!globalConfig.getStringList("blacklist").contains(player.getName().getString())) {
-                                                                     if (player.getName().getString().equals(playerName)) {
+                                                                     if (player.getName().getString().equalsIgnoreCase(playerName)) {
                                                                          source.sendMessage(Text.literal("自己是不能观察自己的").setStyle(Style.EMPTY.withColor(Formatting.RED)));
                                                                      }
-                                                                     else if (globalConfig.getStringList("deny-tp-to-player").contains(playerName)) {
-                                                                         source.sendMessage(Text.literal("该玩家不允许您在观察者模式下传送到TA身旁").setStyle(Style.EMPTY.withColor(Formatting.RED)));
-                                                                     }
                                                                      else {
+                                                                         for (String name : globalConfig.getStringList("deny-tp-to-player")) {
+                                                                             if (playerName.equalsIgnoreCase(name)) {
+                                                                                 source.sendMessage(Text.literal("该玩家不允许您在观察者模式下传送到TA身旁").setStyle(Style.EMPTY.withColor(Formatting.RED)));
+                                                                                 return Command.SINGLE_SUCCESS;
+                                                                             }
+                                                                         }
                                                                          ServerPlayerEntity targetPlayer = server.getPlayerManager().getPlayer(playerName);
                                                                          if (targetPlayer != null) {
                                                                              if (!((PlayerAccess) player).isSpectating()) {

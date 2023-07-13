@@ -27,7 +27,7 @@ public class MixinChat {
     @Shadow
     public ServerPlayerEntity player;
 
-    @Inject(at = @At("HEAD"), method = "onChatMessage")
+    @Inject(at = @At("TAIL"), method = "onChatMessage")
     private void onChatMessage(ChatMessageC2SPacket packet, CallbackInfo ci) {
         String chatMessage = packet.chatMessage();
         if (globalConfig.getBoolean("enable") && globalConfig.getBoolean("enable-MCDR-like-cmd")) {
@@ -63,13 +63,16 @@ public class MixinChat {
                     if ("".equals(playerName)) {
                         player.sendMessage(Text.literal("请不要输入一个空的玩家名").setStyle(Style.EMPTY.withColor(Formatting.RED)));
                     }
-                    else if (player.getName().getString().equals(playerName)) {
+                    else if (player.getName().getString().equalsIgnoreCase(playerName)) {
                         player.sendMessage(Text.literal("自己是不能观察自己的").setStyle(Style.EMPTY.withColor(Formatting.RED)));
                     }
-                    else if (globalConfig.getStringList("deny-tp-to-player").contains(playerName)) {
-                        player.sendMessage(Text.literal("该玩家不允许您在观察者模式下传送到TA身旁").setStyle(Style.EMPTY.withColor(Formatting.RED)));
-                    }
                     else {
+                        for (String name : globalConfig.getStringList("deny-tp-to-player")) {
+                            if (playerName.equalsIgnoreCase(name)) {
+                                player.sendMessage(Text.literal("该玩家不允许您在观察者模式下传送到TA身旁").setStyle(Style.EMPTY.withColor(Formatting.RED)));
+                                return;
+                            }
+                        }
                         ServerPlayerEntity targetPlayer = server.getPlayerManager().getPlayer(playerName);
                         if (targetPlayer != null) {
                             if (!((PlayerAccess) player).isSpectating()) {

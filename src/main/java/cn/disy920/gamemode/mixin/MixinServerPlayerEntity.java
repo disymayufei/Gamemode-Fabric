@@ -99,9 +99,12 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements Pl
             List<String> blacklist = globalConfig.getStringList("deny-tp-to-player");
 
             if (player != null) {
-                if (blacklist.contains(player.getName().getString())) {
-                    this.sendMessage(Text.literal("该玩家不允许您在观察者模式下传送到TA身旁").setStyle(Style.EMPTY.withColor(Formatting.RED)));
-                    cir.setReturnValue(true);
+                String playerName = player.getName().getString();
+                for (String name : blacklist) {
+                    if (playerName.equalsIgnoreCase(name)) {
+                        this.sendMessage(Text.literal("该玩家不允许您在观察者模式下传送到TA身旁").setStyle(Style.EMPTY.withColor(Formatting.RED)));
+                        cir.setReturnValue(true);
+                    }
                 }
             }
         }
@@ -114,9 +117,12 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements Pl
             List<String> blacklist = globalConfig.getStringList("deny-tp-to-player");
 
             if (player != null) {
-                if (blacklist.contains(player.getName().getString())) {
-                    this.sendMessage(Text.literal("该玩家不允许您在观察者模式下传送到TA身旁").setStyle(Style.EMPTY.withColor(Formatting.RED)));
-                    ci.cancel();
+                String playerName = player.getName().getString();
+                for (String name : blacklist) {
+                    if (playerName.equalsIgnoreCase(name)) {
+                        this.sendMessage(Text.literal("该玩家不允许您在观察者模式下传送到TA身旁").setStyle(Style.EMPTY.withColor(Formatting.RED)));
+                        ci.cancel();
+                    }
                 }
             }
         }
