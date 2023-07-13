@@ -83,10 +83,10 @@ public class MixinChat {
                                 Vec3d pos = player.getPos();
                                 ((PlayerAccess) player).setPreviousPosition(player.getWorld(), pos.x, pos.y, pos.z, player.getYaw(), player.getPitch());
 
-                                player.teleport(targetPlayer.getServerWorld(), targetPlayer.getX(), targetPlayer.getY(), targetPlayer.getZ(), targetPlayer.getYaw(), targetPlayer.getPitch());
+                                player.teleport(targetPlayer.getWorld(), targetPlayer.getX(), targetPlayer.getY(), targetPlayer.getZ(), targetPlayer.getYaw(), targetPlayer.getPitch());
                             } else {
                                 server.getPlayerManager().broadcast(Text.literal(player.getName().getString() + "准备观察" + playerName + "啦！").setStyle(Style.EMPTY.withColor(Formatting.GOLD)), false);
-                                player.teleport(targetPlayer.getServerWorld(), targetPlayer.getX(), targetPlayer.getY(), targetPlayer.getZ(), targetPlayer.getYaw(), targetPlayer.getPitch());
+                                player.teleport(targetPlayer.getWorld(), targetPlayer.getX(), targetPlayer.getY(), targetPlayer.getZ(), targetPlayer.getYaw(), targetPlayer.getPitch());
                             }
                         }
                         else {

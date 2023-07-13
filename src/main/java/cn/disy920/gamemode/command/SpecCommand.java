@@ -104,9 +104,9 @@ public class SpecCommand {
                                                                                  Vec3d pos = player.getPos();
                                                                                  ((PlayerAccess) player).setPreviousPosition(player.getWorld(), pos.x, pos.y, pos.z, player.getYaw(), player.getPitch());
 
-                                                                                 player.teleport(targetPlayer.getServerWorld(), targetPlayer.getX(), targetPlayer.getY(), targetPlayer.getZ(), targetPlayer.getYaw(), targetPlayer.getPitch());
+                                                                                 player.teleport(targetPlayer.getWorld(), targetPlayer.getX(), targetPlayer.getY(), targetPlayer.getZ(), targetPlayer.getYaw(), targetPlayer.getPitch());
                                                                              } else {
-                                                                                 player.teleport(targetPlayer.getServerWorld(), targetPlayer.getX(), targetPlayer.getY(), targetPlayer.getZ(), targetPlayer.getYaw(), targetPlayer.getPitch());
+                                                                                 player.teleport(targetPlayer.getWorld(), targetPlayer.getX(), targetPlayer.getY(), targetPlayer.getZ(), targetPlayer.getYaw(), targetPlayer.getPitch());
                                                                              }
                                                                          }
                                                                          else {
