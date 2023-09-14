@@ -61,9 +61,26 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements Pl
             dataDir.mkdirs();
         }
 
-        File dataFile = new File(dataDir, name + ".json");
+        File oldDataFile = new File(dataDir, name + ".json");
+        File dataFile = new File(dataDir, uuid + ".json");
 
         try {
+            if (oldDataFile.exists()) {  // 转换旧的数据文件
+                RootSection temp = JsonConfig.loadConfig(oldDataFile);
+                boolean spectating = temp.getBoolean("spectating");
+                Section section = temp.getSection("prevPosition");
+
+                config = JsonConfig.loadConfig(dataFile);
+                config.set("spectating", spectating);
+                config.set("prevPosition", section);
+
+                config.save(configFile);
+
+                oldDataFile.delete();
+
+                return;
+            }
+
             if (!dataFile.exists()) {
                 dataFile.createNewFile();
                 Files.writeString(dataFile.toPath(), "{\"spectating\": false, \n\"prevPosition\": null}");
@@ -89,6 +106,7 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements Pl
         catch (Exception e) {
             LOGGER.error("创建玩家" + name + "的配置文件时发生错误，以下是错误的堆栈信息:");
             e.printStackTrace();
+            ((ServerPlayerEntity)(Object)this).networkHandler.disconnect(Text.literal("初始您的观察者模式失败，请联系服务器管理员查看后台报错").setStyle(Style.EMPTY.withColor(Formatting.RED)));
         }
     }
 
