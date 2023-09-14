@@ -65,25 +65,39 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements Pl
         File dataFile = new File(dataDir, uuid + ".json");
 
         try {
+            if (!dataFile.exists()) {
+                dataFile.createNewFile();
+                Files.writeString(dataFile.toPath(), "{\"spectating\": false, \"prevPosition\": null}");
+            }
+
             if (oldDataFile.exists()) {  // 转换旧的数据文件
                 RootSection temp = JsonConfig.loadConfig(oldDataFile);
                 boolean spectating = temp.getBoolean("spectating");
                 Section section = temp.getSection("prevPosition");
 
                 config = JsonConfig.loadConfig(dataFile);
-                config.set("spectating", spectating);
-                config.set("prevPosition", section);
 
-                config.save(configFile);
+                if (section != null) {
+                    PlayerPosition previousPosition = new PlayerPosition(
+                            section.getString("world"),
+                            section.getDouble("x"),
+                            section.getDouble("y"),
+                            section.getDouble("z"),
+                            section.getFloat("yaw"),
+                            section.getFloat("pitch")
+                    );
+
+                    config.set("prevPosition", previousPosition);
+                }
+
+                config.set("spectating", spectating);
+
+
+                config.save(dataFile);
 
                 oldDataFile.delete();
 
                 return;
-            }
-
-            if (!dataFile.exists()) {
-                dataFile.createNewFile();
-                Files.writeString(dataFile.toPath(), "{\"spectating\": false, \n\"prevPosition\": null}");
             }
 
             configFile = dataFile;
