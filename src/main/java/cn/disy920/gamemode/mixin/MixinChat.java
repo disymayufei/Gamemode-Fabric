@@ -75,9 +75,12 @@ public class MixinChat {
                         }
                         ServerPlayerEntity targetPlayer = server.getPlayerManager().getPlayer(playerName);
                         if (targetPlayer != null) {
+                            if (!player.isSpectator()) {
+                                player.changeGameMode(GameMode.SPECTATOR);
+                            }
+
                             if (!((PlayerAccess) player).isSpectating()) {
                                 server.getPlayerManager().broadcast(Text.literal(player.getName().getString() + "准备观察" + playerName + "啦！").setStyle(Style.EMPTY.withColor(Formatting.GOLD)), false);
-                                player.changeGameMode(GameMode.SPECTATOR);
                                 ((PlayerAccess) player).setSpectating(true);
 
                                 Vec3d pos = player.getPos();
